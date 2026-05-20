@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABNT DEX - Assistente e Gerador de Formatação ABNT</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-theme">
+    <!-- Premium Header -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="logo">
+                <i class="fa-solid fa-graduation-cap logo-icon"></i>
+                <span class="logo-text">ABNT <span class="accent-text">DEX</span></span>
+            </div>
+            <div class="header-actions">
+                <button id="theme-toggle-btn" class="icon-btn" aria-label="Alternar Tema" title="Alternar Tema">
+                    <i class="fa-solid fa-sun icon-sun"></i>
+                    <i class="fa-solid fa-moon icon-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace Container -->
+    <main class="app-container">
+        <!-- Navigation Tab Sidebar -->
+        <nav class="app-nav" aria-label="Navegação Principal">
+            <ul>
+                <li>
+                    <button class="nav-tab-btn active" id="tab-btn-simulador" onclick="switchTab('simulador')">
+                        <i class="fa-solid fa-file-lines nav-icon"></i>
+                        <span>Simulador de Margens</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-tab-btn" id="tab-btn-citacoes" onclick="switchTab('citacoes')">
+                        <i class="fa-solid fa-quote-right nav-icon"></i>
+                        <span>Gerador de Citações</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-tab-btn" id="tab-btn-referencias" onclick="switchTab('referencias')">
+                        <i class="fa-solid fa-list-ol nav-icon"></i>
+                        <span>Gerador de Referências</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-tab-btn" id="tab-btn-guia" onclick="switchTab('guia')">
+                        <i class="fa-solid fa-book-open nav-icon"></i>
+                        <span>Guia de Normas</span>
+                    </button>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <div class="content-viewport">
+            <!-- TAB 1: SIMULADOR DE MARGENS -->
+            <section id="tab-content-simulador" class="tab-panel active">
+                <div class="panel-header">
+                    <h2>Simulador de Layout & Margens (NBR 14724)</h2>
+                    <p>Configure os parâmetros visuais e veja em tempo real como o texto é distribuído nas margens ABNT.</p>
+                </div>
+                <div class="panel-body grid-2-columns">
+                    <!-- Controls Column -->
+                    <div class="controls-card card">
+                        <h3>Configurações de Página</h3>
+                        <form id="margins-simulator-form" onsubmit="event.preventDefault();">
+                            <div class="form-group-row">
+                                <div class="form-group">
+                                    <label for="page-type">Modo da Página</label>
+                                    <select id="page-type" onchange="updateSimulatorPage()">
+                                        <option value="anverso">Anverso (Frente)</option>
+                                        <option value="verso">Verso (Verso)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="print-mode">Formato de Saída</label>
+                                    <select id="print-mode" onchange="updateSimulatorPage()">
+                                        <option value="digital">Digital (Apenas anverso)</option>
+                                        <option value="impresso">Impresso (Frente e verso)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="divider">Margens (cm)</div>
+
+                            <div class="form-group-row-4">
+                                <div class="form-group">
+                                    <label for="margin-top">Superior</label>
+                                    <input type="number" id="margin-top" value="3.0" step="0.1" min="0" max="6" oninput="updateSimulatorPage()">
+                                </div>
+                                <div class="form-group">
+                                    <label for="margin-left">Esquerda</label>
+                                    <input type="number" id="margin-left" value="3.0" step="0.1" min="0" max="6" oninput="updateSimulatorPage()">
+                                </div>
+                                <div class="form-group">
+                                    <label for="margin-bottom">Inferior</label>
+                                    <input type="number" id="margin-bottom" value="2.0" step="0.1" min="0" max="6" oninput="updateSimulatorPage()">
+                                </div>
+                                <div class="form-group">
+                                    <label for="margin-right">Direita</label>
+                                    <input type="number" id="margin-right" value="2.0" step="0.1" min="0" max="6" oninput="updateSimulatorPage()">
+                                </div>
+                            </div>
+                            
+                            <div class="btn-group-row">
+                                <button type="button" class="btn secondary-btn" onclick="resetMargins()">
+                                    <i class="fa-solid fa-rotate-left"></i> Redefinir para Padrão ABNT
+                                </button>
+                            </div>
+
+                            <div class="divider">Tipografia & Parágrafo</div>
+
+                            <div class="form-group-row">
+                                <div class="form-group">
+                                    <label for="font-family">Fonte</label>
+                                    <select id="font-family" onchange="updateSimulatorPage()">
+                                        <option value="Arial">Arial</option>
+                                        <option value="Times New Roman">Times New Roman</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="line-spacing">Espaçamento</label>
+                                    <select id="line-spacing" onchange="updateSimulatorPage()">
+                                        <option value="1.5">1.5 (Padrão texto)</option>
+                                        <option value="1.0">1.0 (Citação longa)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="paragraph-indent">Recuo de Parágrafo (Primeira linha)</label>
+                                <select id="paragraph-indent" onchange="updateSimulatorPage()">
+                                    <option value="1.25">1,25 cm (Padrão ABNT)</option>
+                                    <option value="0">Sem recuo (Citações/Títulos)</option>
+                                </select>
+                            </div>
+                        </form>
+                        <div class="info-alert info-box">
+                            <i class="fa-solid fa-circle-info info-icon"></i>
+                            <div class="info-text">
+                                <p><strong>Nota ABNT:</strong> Na impressão frente e verso (impresso), as margens se invertem no verso (esquerda $\leftrightarrow$ direita).</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Simulator Preview Column -->
+                    <div class="preview-card card">
+                        <h3>Visualizador de Página Realista</h3>
+                        <div class="simulator-canvas">
+                            <!-- Page Outer Wrapper -->
+                            <div class="virtual-page" id="virtual-page-element">
+                                <div class="margin-indicator margin-indicator-top" id="indicator-top-val">3 cm</div>
+                                <div class="margin-indicator margin-indicator-left" id="indicator-left-val">3 cm</div>
+                                <div class="margin-indicator margin-indicator-bottom" id="indicator-bottom-val">2 cm</div>
+                                <div class="margin-indicator margin-indicator-right" id="indicator-right-val">2 cm</div>
+                                
+                                <div class="page-number-box" id="page-num-indicator">12</div>
+                                
+                                <!-- Page Content Area bounded by margins -->
+                                <div class="page-printable-area" id="page-printable-area-element">
+                                    <h4 class="preview-title">1 INTRODUÇÃO</h4>
+                                    <p class="preview-paragraph">
+                                        Este simulador visual demonstra a renderização do corpo do texto conforme a norma de apresentação de trabalhos acadêmicos (NBR 14724). O alinhamento das margens determina a área útil disponível para escrita das seções do TCC.
+                                    </p>
+                                    <p class="preview-paragraph">
+                                        Note a margem superior de 3cm e a esquerda de 3cm para folhas de anverso. Conforme determinam as boas práticas metodológicas, o espaçamento de 1,5 entre linhas facilita a leitura do material. O recuo padrão da primeira linha é de 1,25 cm.
+                                    </p>
+                                    <!-- A blockquote for citation rendering -->
+                                    <div class="preview-long-quote" id="preview-long-quote-element">
+                                        Esta é uma simulação de citação direta longa com mais de três linhas. Ela é formatada com recuo de 4 cm da margem esquerda, tamanho de fonte reduzido (tamanho 10) e espaçamento simples entre linhas, sem as aspas. (Autor, 2026, p. 45).
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: GERADOR DE CITAÇÕES -->
+            <section id="tab-content-citacoes" class="tab-panel">
+                <div class="panel-header">
+                    <h2>Gerador de Citações (NBR 10520:2023)</h2>
+                    <p>Gere citações diretas (curtas/longas) ou indiretas formatadas conforme as novas regras da ABNT.</p>
+                </div>
+                <div class="panel-body grid-2-columns">
+                    <!-- Controls Form -->
+                    <div class="controls-card card">
+                        <h3>Informações da Citação</h3>
+                        <form id="citation-generator-form" onsubmit="generateCitation(); return false;">
+                            <div class="form-group">
+                                <label for="cit-author-type">Tipo de Autor</label>
+                                <select id="cit-author-type" onchange="toggleCitationFields()">
+                                    <option value="pessoa">Pessoa(s) Física(s)</option>
+                                    <option value="corporacao">Instituição / Corporativo</option>
+                                    <option value="sem_autor">Sem Autoria (Título)</option>
+                                </select>
+                            </div>
+
+                            <!-- Physical Person Fields -->
+                            <div id="cit-fields-pessoa">
+                                <div class="form-group">
+                                    <label for="cit-author-count">Quantidade de Autores</label>
+                                    <select id="cit-author-count" onchange="toggleAuthorNameInputs()">
+                                        <option value="1">1 Autor</option>
+                                        <option value="2">2 Autores</option>
+                                        <option value="3">3 Autores</option>
+                                        <option value="4">4 ou mais (*et al.*)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group-stack" id="cit-author-names-container">
+                                    <div class="form-group author-input-group" id="group-author-1">
+                                        <label for="cit-author-1">Sobrenome do Autor 1</label>
+                                        <input type="text" id="cit-author-1" placeholder="Ex: Silva" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Corporation Fields -->
+                            <div id="cit-fields-corporacao" class="hidden">
+                                <div class="form-group">
+                                    <label for="cit-corp-name">Nome da Entidade / Acrônimo</label>
+                                    <input type="text" id="cit-corp-name" placeholder="Ex: IBGE ou Ministério da Saúde">
+                                </div>
+                            </div>
+
+                            <!-- Sem Autor Fields -->
+                            <div id="cit-fields-sem-autor" class="hidden">
+                                <div class="form-group">
+                                    <label for="cit-title-word">Primeira palavra do título do trabalho</label>
+                                    <input type="text" id="cit-title-word" placeholder="Ex: Dicionário">
+                                </div>
+                            </div>
+
+                            <div class="form-group-row">
+                                <div class="form-group">
+                                    <label for="cit-year">Ano de Publicação</label>
+                                    <input type="text" id="cit-year" value="2024" placeholder="Ex: 2024">
+                                </div>
+                                <div class="form-group">
+                                    <label for="cit-page">Página (Obrigatório para Direta)</label>
+                                    <input type="text" id="cit-page" placeholder="Ex: 42">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="cit-quote-text">Texto Citado (para Citação Direta)</label>
+                                <textarea id="cit-quote-text" rows="3" placeholder="Insira a frase copiada do autor aqui..."></textarea>
+                            </div>
+
+                            <button type="submit" class="btn primary-btn btn-full">
+                                <i class="fa-solid fa-gears"></i> Gerar Citação
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Result Panel -->
+                    <div class="result-card card">
+                        <h3>Resultados da Formatação</h3>
+                        <div class="result-box-wrapper">
+                            <h4>1. Citação Indireta (Paráfrase)</h4>
+                            <div class="output-group">
+                                <h5>No fluxo do parágrafo:</h5>
+                                <div class="output-block">
+                                    <code id="out-cit-indireta-fluxo">Silva (2024) afirma que...</code>
+                                    <button class="copy-btn" onclick="copyText('out-cit-indireta-fluxo')">
+                                        <i class="fa-regular fa-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="output-group">
+                                <h5>No final de um parágrafo (entre parênteses):</h5>
+                                <div class="output-block">
+                                    <code id="out-cit-indireta-parenteses">(Silva, 2024)</code>
+                                    <button class="copy-btn" onclick="copyText('out-cit-indireta-parenteses')">
+                                        <i class="fa-regular fa-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="divider"></div>
+
+                            <h4>2. Citação Direta (Cópia Literal)</h4>
+                            <div class="output-group">
+                                <h5>Curta (Até 3 linhas - no texto com aspas):</h5>
+                                <div class="output-block">
+                                    <code id="out-cit-direta-curta">"O texto citado aqui" (Silva, 2024, p. 42).</code>
+                                    <button class="copy-btn" onclick="copyText('out-cit-direta-curta')">
+                                        <i class="fa-regular fa-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="output-group">
+                                <h5>Longa (Mais de 3 linhas - bloco recuado 4cm):</h5>
+                                <div class="output-block-quote">
+                                    <div class="blockquote-preview-box" id="out-cit-direta-longa-preview">
+                                        Texto citado com mais de 3 linhas que será recuado a 4 centímetros da margem esquerda...
+                                    </div>
+                                    <div class="block-quote-actions">
+                                        <span class="badge">Recuo 4cm | Fonte 10</span>
+                                        <button class="copy-btn" onclick="copyText('out-cit-direta-longa-preview')">
+                                            <i class="fa-regular fa-copy"></i> Copiar Texto
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="info-alert warning-box">
+                            <i class="fa-solid fa-triangle-exclamation info-icon"></i>
+                            <div class="info-text">
+                                <p><strong>Atualização NBR 10520:2023:</strong> Não use mais caixa alta dentro de parênteses. Utilize apenas a inicial maiúscula (Ex: `(Silva, 2024)`).</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: GERADOR DE REFERÊNCIAS -->
+            <section id="tab-content-referencias" class="tab-panel">
+                <div class="panel-header">
+                    <h2>Gerador de Referências Bibliográficas (NBR 6023:2025)</h2>
+                    <p>Crie referências técnicas impecáveis para os mais diversos suportes documentais.</p>
+                </div>
+                <div class="panel-body grid-2-columns">
+                    <!-- Controls Form -->
+                    <div class="controls-card card">
+                        <h3>Tipo de Documento</h3>
+                        <div class="tab-subnav">
+                            <button class="subnav-btn active" id="subtab-btn-livro" onclick="switchSubTab('livro')">Livro</button>
+                            <button class="subnav-btn" id="subtab-btn-artigo" onclick="switchSubTab('artigo')">Artigo Periódico</button>
+                            <button class="subnav-btn" id="subtab-btn-web" onclick="switchSubTab('web')">Web / Site</button>
+                            <button class="subnav-btn" id="subtab-btn-lei" onclick="switchSubTab('lei')">Legislação</button>
+                        </div>
+
+                        <form id="reference-generator-form" onsubmit="generateReference(); return false;">
+                            <!-- Form fields will adjust based on the selected sub-tab -->
+                            <div class="form-group">
+                                <label for="ref-authors">Autores (SOBRENOME, Nome; SOBRENOME, Nome)</label>
+                                <input type="text" id="ref-authors" placeholder="Ex: SILVA, João; SANTOS, Maria" required>
+                                <small>Separe múltiplos autores por ponto e vírgula.</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="ref-title" id="ref-title-label">Título da Obra</label>
+                                <input type="text" id="ref-title" placeholder="Ex: Metodologia do Trabalho Científico" required>
+                            </div>
+
+                            <!-- Book specific -->
+                            <div id="ref-fields-livro" class="subtab-fields">
+                                <div class="form-group-row">
+                                    <div class="form-group">
+                                        <label for="ref-book-subtitle">Subtítulo (sem destaque)</label>
+                                        <input type="text" id="ref-book-subtitle" placeholder="Ex: um guia prático">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ref-book-edition">Edição</label>
+                                        <input type="text" id="ref-book-edition" placeholder="Ex: 3. ed.">
+                                    </div>
+                                </div>
+                                <div class="form-group-row">
+                                    <div class="form-group">
+                                        <label for="ref-book-city">Cidade de Publicação</label>
+                                        <input type="text" id="ref-book-city" placeholder="Ex: São Paulo">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ref-book-publisher">Editora</label>
+                                        <input type="text" id="ref-book-publisher" placeholder="Ex: Atlas">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Article specific -->
+                            <div id="ref-fields-artigo" class="subtab-fields hidden">
+                                <div class="form-group">
+                                    <label for="ref-journal-name">Nome da Revista/Periódico</label>
+                                    <input type="text" id="ref-journal-name" placeholder="Ex: Revista Brasileira de Ciência">
+                                </div>
+                                <div class="form-group-row-4">
+                                    <div class="form-group">
+                                        <label for="ref-journal-city">Cidade</label>
+                                        <input type="text" id="ref-journal-city" placeholder="Ex: Rio de Janeiro">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ref-journal-volume">Volume</label>
+                                        <input type="text" id="ref-journal-volume" placeholder="Ex: v. 12">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ref-journal-number">Número</label>
+                                        <input type="text" id="ref-journal-number" placeholder="Ex: n. 3">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ref-journal-pages">Páginas (Ex: 110-125)</label>
+                                        <input type="text" id="ref-journal-pages" placeholder="Ex: 15-30">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Web specific -->
+                            <div id="ref-fields-web" class="subtab-fields hidden">
+                                <div class="form-group-row">
+                                    <div class="form-group">
+                                        <label for="ref-web-site">Nome do Site</label>
+                                        <input type="text" id="ref-web-site" placeholder="Ex: G1">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ref-web-url">URL Completa (Disponível em)</label>
+                                        <input type="url" id="ref-web-url" placeholder="Ex: https://g1.globo.com/artigo">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="ref-web-access-date">Data de Acesso (Hoje)</label>
+                                    <input type="date" id="ref-web-access-date">
+                                </div>
+                            </div>
+
+                            <!-- Legislation specific -->
+                            <div id="ref-fields-lei" class="subtab-fields hidden">
+                                <div class="form-group-row">
+                                    <div class="form-group">
+                                        <label for="ref-law-jurisdiction">Jurisdição (País/Estado/Município)</label>
+                                        <input type="text" id="ref-law-jurisdiction" placeholder="Ex: BRASIL">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ref-law-org">Órgão Superior / Ministério</label>
+                                        <input type="text" id="ref-law-org" placeholder="Ex: Congresso Nacional ou Constituição (1988)">
+                                    </div>
+                                </div>
+                                <div class="form-group-row">
+                                    <div class="form-group">
+                                        <label for="ref-law-source">Fonte/Diário Oficial de publicação</label>
+                                        <input type="text" id="ref-law-source" placeholder="Ex: Diário Oficial da União">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ref-law-city">Cidade de publicação</label>
+                                        <input type="text" id="ref-law-city" placeholder="Ex: Brasília">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="ref-year">Ano de Publicação / Emissão</label>
+                                <input type="text" id="ref-year" value="2025" placeholder="Ex: 2025" required>
+                            </div>
+
+                            <button type="submit" class="btn primary-btn btn-full">
+                                <i class="fa-solid fa-list-ol"></i> Gerar Referência
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Result Panel -->
+                    <div class="result-card card">
+                        <h3>Referência Formatada</h3>
+                        <div class="result-box-wrapper">
+                            <div class="reference-output-box">
+                                <div id="out-reference-styled" class="formatted-reference">
+                                    Aguardando inserção de dados...
+                                </div>
+                                <div class="reference-actions">
+                                    <button class="btn secondary-btn" onclick="copyReferenceText()">
+                                        <i class="fa-regular fa-copy"></i> Copiar Referência
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="divider">Regras NBR 6023 Embutidas</div>
+                            
+                            <ul class="abnt-rules-list">
+                                <li><i class="fa-solid fa-circle-check text-success"></i> <strong>Título Destacado:</strong> O título principal é destacado (negrito). Subtítulos não recebem destaque.</li>
+                                <li><i class="fa-solid fa-circle-check text-success"></i> <strong>Meses Abreviados:</strong> Meses em português são abreviados com 3 letras e ponto (ex: <code>jan., fev.</code>), exceto <code>maio</code> que é escrito por extenso.</li>
+                                <li><i class="fa-solid fa-circle-check text-success"></i> <strong>Alinhamento à esquerda:</strong> O texto da referência deve ficar alinhado à margem esquerda, com espaçamento entre linhas simples e espaço simples separando referências entre si.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 4: GUIA DE REGRAS -->
+            <section id="tab-content-guia" class="tab-panel">
+                <div class="panel-header">
+                    <h2>Guia de Normas Acadêmicas ABNT</h2>
+                    <p>Consulte as diretrizes regulamentares de estruturação e formatação de trabalhos científicos de forma interativa.</p>
+                </div>
+                
+                <div class="search-bar-wrapper">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="guide-search" placeholder="Pesquisar por assunto... (Ex: margens, citação, anexo, capa)" oninput="filterGuide()">
+                </div>
+
+                <div class="guide-grid" id="guide-cards-container">
+                    <!-- Guide Card 1 -->
+                    <div class="guide-item card" data-keywords="margens papel fonte tamanho espaçamento layout anverso verso">
+                        <div class="guide-item-header">
+                            <span class="badge badge-accent">NBR 14724</span>
+                            <h3>Formatação Geral e Margens</h3>
+                        </div>
+                        <div class="guide-item-body">
+                            <p>As regras básicas para a estrutura física do papel são:</p>
+                            <ul>
+                                <li><strong>Papel:</strong> Tamanho A4 (21 cm x 29,7 cm), branco ou reciclado.</li>
+                                <li><strong>Fonte:</strong> Arial ou Times New Roman (tamanho 12 para texto comum, tamanho 10 para citações longas e notas).</li>
+                                <li><strong>Espaçamento:</strong> 1,5 para o corpo do texto e espaçamento simples (1,0) para citações longas e notas de rodapé.</li>
+                                <li><strong>Margens (Anverso):</strong> 3 cm superior e esquerda; 2 cm inferior e direita.</li>
+                                <li><strong>Margens (Verso):</strong> 3 cm superior e direita; 2 cm inferior e esquerda.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Guide Card 2 -->
+                    <div class="guide-item card" data-keywords="citação direta curta longa indireta parenteses autor data apud">
+                        <div class="guide-item-header">
+                            <span class="badge badge-accent">NBR 10520</span>
+                            <h3>Citações no Texto</h3>
+                        </div>
+                        <div class="guide-item-body">
+                            <p>Existem dois grandes formatos de citação:</p>
+                            <ul>
+                                <li><strong>Citação Indireta:</strong> Paráfrase das ideias do autor. Escrita no corpo do texto comum. Ex: <code>Segundo Silva (2020), a tecnologia auxilia...</code></li>
+                                <li><strong>Citação Direta Curta:</strong> Cópia de até 3 linhas. Fica no texto, entre aspas. Ex: <code>"A ciência é um método" (Santos, 2021, p. 12).</code></li>
+                                <li><strong>Citação Direta Longa:</strong> Mais de 3 linhas. Deve ser recuada 4 cm da margem esquerda, tamanho 10, sem aspas e com espaçamento simples.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Guide Card 3 -->
+                    <div class="guide-item card" data-keywords="referencia livro capitulo artigo site legislação lei internet">
+                        <div class="guide-item-header">
+                            <span class="badge badge-accent">NBR 6023</span>
+                            <h3>Referências Bibliográficas</h3>
+                        </div>
+                        <div class="guide-item-body">
+                            <p>Toda obra citada deve constar na lista de referências ao final:</p>
+                            <ul>
+                                <li><strong>Alinhamento:</strong> Alinhado estritamente à esquerda (não justificado).</li>
+                                <li><strong>Espaçamento:</strong> Simples interna, com espaço em branco simples separando cada referência.</li>
+                                <li><strong>Destaque:</strong> Título em negrito (ou itálico), exceto subtítulos.</li>
+                                <li><strong>Ordem:</strong> Alfabética por sobrenome do autor principal.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Guide Card 4 -->
+                    <div class="guide-item card" data-keywords="estrutura pre-textual textual pos-textual capa sumario resumo">
+                        <div class="guide-item-header">
+                            <span class="badge badge-accent">Estrutura</span>
+                            <h3>Elementos do TCC</h3>
+                        </div>
+                        <div class="guide-item-body">
+                            <p>Divisão e ordenação oficial do trabalho acadêmico:</p>
+                            <ul>
+                                <li><strong>Pré-Textuais:</strong> Capa, Folha de Rosto, Resumo (Português/Inglês) e Sumário.</li>
+                                <li><strong>Textuais:</strong> Introdução (Tema, Objetivos, Problema), Desenvolvimento (Fundamentação Teórica, Metodologia, Análise) e Conclusão.</li>
+                                <li><strong>Pós-Textuais:</strong> Referências, Apêndices (produzidos pelo autor) e Anexos (fontes externas).</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <p>Desenvolvido com o rigor metodológico brasileiro &copy; 2026. ABNT DEX - Normas ABNT NBR 14724, 10520, 6023.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+</body>
+</html>
